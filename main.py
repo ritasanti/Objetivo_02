@@ -16,6 +16,31 @@ def get_Persona():
 def get_Persona_Estado():
     return jsonify([persona for persona in models.obtenerDatos_Estado()])
 
+#Prueba ruta para SP_RegistroPersona
+@app.route("/persona/SP_Registro", methods=["POST"])
+def inser_registro():
+    apellido=request.form.get("apellido")
+    nombres=request.form.get("nombres")
+    dni=request.form.get("dni")
+    domicilio=request.form.get("domicilio")
+    telefono=request.form.get("telefono")
+    id_estado=request.form.get("id_estado")
+    fechora_registro=request.form.get("fechora_registro")
+    try:
+        model.sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro)
+        return jsonify({"Mensaje":"Registro realizado correctamente"})
+    except Exception as e:
+        return jsonify({"Mensaje":str (e)}), 500
+    
+
+#Ruta para el SP_ConsultarPersona
+@app.route("/persona/consultar", methods=["GET"])
+def consultarPersona():
+    try:
+        results=model.sp_consultarPersona()
+        return jsonify(results), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__=='__main__':
     with app.app_context():
