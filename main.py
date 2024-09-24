@@ -16,6 +16,17 @@ def get_Persona():
 def get_Persona_Estado():
     return jsonify([persona for persona in models.obtenerDatos_Estado()])
 
+#Eliminar Registro de la base de datos
+@app.route("/persona/<int:id>", methods=["DELETE"])
+def eliminar_persona(id):
+    resultado=models.eliminarDato(id)
+    if resultado:
+        return jsonify({"message":"Persona eliminada"}),200
+    else:
+        return jsonify({"message":"Persona no encontrada"}),404
+    
+#Faltan la funcion de modificar e insertar, trabajando en eso
+
 
 if __name__=='__main__':
     with app.app_context():
