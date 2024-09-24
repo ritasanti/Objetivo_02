@@ -9,3 +9,18 @@ def obtenerDatos():
         registros=cursor.fetchall()
         conecc.close()
     return registros
+
+#Traer datos si se cumple la condicion
+def obtenerDatos_Estado():
+    con = conexion()
+    sql_query = "SELECT * FROM PERSONA WHERE ID_ESTADO=%s"
+    registros = []
+    try:
+        with con.cursor() as cursor:
+            cursor.execute(sql_query, (1,))
+            registros = cursor.fetchall()
+    except Exception as e:
+        print(f"Error al obtener datos: {e}")
+    finally:
+        con.close()
+    return registros
