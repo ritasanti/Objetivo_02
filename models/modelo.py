@@ -26,28 +26,10 @@ def obtenerDatos_Estado():
     return registros
 
 #Agregar un registro
-#Revisar 
-"""def agregarRegistro(apellido, nombres, dni, domicilio, telefono, id_estado, fecha_registro,fecha_modificacion):
-    try:
-        conex = conexion()
-        with conex.cursor() as cursor:
-            sql = "INSERT INTO PERSONA(APELLIDO, NOMBRE, DNI, DOMICILIO, TELEFONO, ID_ESTADO, FECHA_REGISTRO,FECHA_MODIFICACION) VALUES (%s, %s, %s, %s, %s, %s, %s,%s)"
-            cursor.execute(sql, (apellido, nombres, dni, domicilio, telefono, id_estado, fecha_registro,fecha_modificacion))
-            conex.commit()
-    except Exception as e:
-        print("Error al agregar el registro:", e)
-    finally:
-        conex.close()"""
 
 
-#Eliminar el registro
-def eliminarDato(id):
-    con=conexion()
-    sql_queryy="DELETE FROM PERSONA WHERE ID=%s"
-    with con.cursor() as cursor:
-        cursor.execute(sql_queryy,id)
-        con.commit()
-        con.close()
+
+
 
 #utilizacion de SP_RegistroPersona
 def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
