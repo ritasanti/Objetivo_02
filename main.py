@@ -27,7 +27,7 @@ def inser_registro():
     id_estado=request.form.get("id_estado")
     fechora_registro=request.form.get("fechora_registro")
     try:
-        model.sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro)
+        models.sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro)
         return jsonify({"Mensaje":"Registro realizado correctamente"})
     except Exception as e:
         return jsonify({"Mensaje":str (e)}), 500
@@ -37,7 +37,7 @@ def inser_registro():
 @app.route("/persona/consultar", methods=["GET"])
 def consultarPersona():
     try:
-        results=model.sp_consultarPersona()
+        results=models.sp_consultarPersona()
         return jsonify(results), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
