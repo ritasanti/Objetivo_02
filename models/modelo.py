@@ -78,10 +78,10 @@ def sp_eliminarPersona(id_persona):
     try:
         # Establecer la conexión a la base de datos
         con = mysql.connector.connect(
-            host='localhost',
-            database='persona-forbit',
-            user='root', 
-            password=''  
+            host='localhost', #Colocar cada uno su respectivos datos de la bd
+            database='persona-forbit', #Colocar cada uno su respectivos datos de la bd
+            user='root',  #Colocar cada uno su respectivos datos de la bd
+            password=''  #Colocar cada uno su respectivos datos de la bd
         )
 
         if con.is_connected():
