@@ -30,6 +30,7 @@ def obtenerDatos_Estado():
         con.close()
     return registros
 
+
 #Eliminar el registro
 def eliminarDato(id):
     con=conexion()
@@ -40,6 +41,13 @@ def eliminarDato(id):
         con.close()
 
         
+#Agregar un registro
+
+
+
+
+
+
 #utilizacion de SP_RegistroPersona
 def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
     con=conexion()
@@ -56,6 +64,7 @@ def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora
     finally:
         cursor.close()
         con.close()
+
 
 # Función para conectarse a la base de datos y ejecutar SP_DeletePersona
 def sp_eliminarPersona(id_persona):
@@ -84,3 +93,23 @@ def sp_eliminarPersona(id_persona):
         if con.is_connected():
             cursor.close()
             con.close()
+
+
+
+
+#Llamado al Stored Procedure SP_ConsultarPersona
+def sp_consultarPersona():
+    con=conexion()
+    cursor=con.cursor()
+    sql_query="CALL SP_CONSULTARPERSONA"
+    try:
+        cursor.execute(sql_query)
+        results=cursor.fetchall()
+        return results
+    except Exception as e:
+        print("Error al llamar al procedimiento: ",e)
+        return None
+    finally:
+        cursor.close()
+        con.close()
+
