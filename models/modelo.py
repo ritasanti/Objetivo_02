@@ -65,3 +65,19 @@ def sp_consultarPersona():
     finally:
         cursor.close()
         con.close()
+
+# Llamado al Stored Procedure SP_EliminarPersona
+def sp_eliminarPersona(id_persona):
+    con = conexion()
+    cursor=con.cursor()
+    sql_query = "UPDATE PERSONA SET ID_ESTADO = %s WHERE ID_PERSONA = %s"
+    try:
+        with con.cursor() as cursor:
+            cursor.execute(sql_query, (2, id_persona))
+            con.commit()
+            print(f"Persona con ID {id_persona} eliminada exitosamente.")
+    except Exception as e:
+        print(f"Error al eliminar persona: {e}")
+        con.rollback()
+    finally:
+        con.close()

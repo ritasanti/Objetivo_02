@@ -45,3 +45,12 @@ def consultarPersona():
 if __name__=='__main__':
     with app.app_context():
         app.run(host="localhost",port="5000",debug=True)
+
+# Ruta para el SP_EliminarPersona
+@app.route("/persona/eliminar/<int:id_persona>", methods=["UPDATE"])
+def eliminar_persona(id_persona):
+    try:
+        models.sp_eliminarPersona(id_persona)
+        return jsonify({"Mensaje": f"Persona con ID {id_persona} eliminada correctamente"}), 200
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 500
