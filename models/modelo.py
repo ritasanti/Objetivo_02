@@ -4,9 +4,6 @@ import datetime
 import mysql.connector
 
 
-
-
-
 #Consulta get de todos las personas
 def obtenerDatos():
     conecc=conexion()
@@ -32,11 +29,6 @@ def obtenerDatos_Estado():
         con.close()
     return registros
 
-#Agregar un registro
-
-
-
-
 
 #utilizacion de SP_RegistroPersona
 def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
@@ -55,23 +47,19 @@ def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora
         cursor.close()
         con.close()
 
-
-
-# Llamado al Stored Procedure SP_EliminarPersona
-def sp_eliminarPersona(id_persona):
-    con = conexion()
-    cursor=con.cursor()
-    sql_query = "UPDATE PERSONA SET ID_ESTADO = %s WHERE ID_PERSONA = %s"
+#Interaccion con la base para usar el procedimiento almacenado
+def sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
     try:
-        with con.cursor() as cursor:
-            cursor.execute(sql_query, (2, id_persona))
-            con.commit()
-            print(f"Persona con ID {id_persona} eliminada exitosamente.")
+        con=conexion()
+        cursor=con.cursor()
+        cursor.callproc=('sp_updatepersona',(id,apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro))
+        con.commit()
+        print("Datos actualizados")
     except Exception as e:
-        print(f"Error al eliminar persona: {e}")
-        con.rollback()
+        print("Error al querer actualizar los datos: ",e)
     finally:
-        con.close()
+        cursor.close();
+        con.close();
 
 # Función para conectarse a la base de datos y ejecutar SP_DeletePersona
 def sp_eliminarPersona(id_persona):
@@ -83,7 +71,6 @@ def sp_eliminarPersona(id_persona):
             user='root',  #Colocar cada uno su respectivos datos de la bd
             password=''  #Colocar cada uno su respectivos datos de la bd
         )
-
         if con.is_connected():
             cursor = con.cursor()
             # Llamar al procedimiento almacenado SP_DeletePersona
@@ -91,11 +78,9 @@ def sp_eliminarPersona(id_persona):
             cursor.execute(sql_query, (id_persona,))
             con.commit()
             print(f"Persona con ID {id_persona} eliminada (baja lógica) exitosamente.")
-    
     except Error as e:
         print(f"Error al ejecutar SP_DeletePersona: {e}")
         con.rollback()  # Revertir en caso de error
-    
     finally:
         if con.is_connected():
             cursor.close()
