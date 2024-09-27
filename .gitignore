@@ -1,3 +1,6 @@
+.venv
+.env
+
 OBJETIVO_02/.venv
 OBJETIVO_02/.env
 Objetivo_02/BD/__pycache__

@@ -1,5 +1,10 @@
 from BD.db import conexion
+from mysql.connector import Error
 import datetime
+import mysql.connector
+
+
+
 #Consulta get de todos las personas
 def obtenerDatos():
     conecc=conexion()
@@ -25,6 +30,12 @@ def obtenerDatos_Estado():
         con.close()
     return registros
 
+#Agregar un registro
+
+
+
+
+
 #utilizacion de SP_RegistroPersona
 def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
     con=conexion()
@@ -41,36 +52,47 @@ def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora
     finally:
         cursor.close()
         con.close()
-  
 
-
-#Llamado al Stored Procedure SP_ConsultarPersona
-def sp_consultarPersona():
-    con=conexion()
-    cursor=con.cursor()
-    sql_query="CALL SP_CONSULTARPERSONA"
+# Función para conectarse a la base de datos y ejecutar SP_DeletePersona
+def sp_eliminarPersona(id_persona):
     try:
-        cursor.execute(sql_query)
-        results=cursor.fetchall()
-        return results
-    except Exception as e:
-        print("Error al llamar al procedimiento: ",e)
-        return None
+        # Establecer la conexión a la base de datos
+        con = mysql.connector.connect(
+            host='localhost',
+            database='persona-forbit',
+            user='root', #Completar cada uno con su Base de datos
+            password='root' #Completar cada uno con su Base de datos
+        )
+
+        if con.is_connected():
+            cursor = con.cursor()
+            # Llamar al procedimiento almacenado SP_DeletePersona
+            sql_query = "CALL SP_DeletePersona(%s)"
+            cursor.execute(sql_query, (id_persona,))
+            con.commit()
+            print(f"Persona con ID {id_persona} eliminada (baja lógica) exitosamente.")
+    
+    except Error as e:
+        print(f"Error al ejecutar SP_DeletePersona: {e}")
+        con.rollback()  # Revertir en caso de error
+    
     finally:
+
         cursor.close()
         con.close()
 
-
-#Interaccion con la base para usar el procedimiento almacenado
-def sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
+# Llamado al Stored Procedure SP_EliminarPersona
+def sp_eliminarPersona(id_persona):
+    con = conexion()
+    cursor=con.cursor()
+    sql_query = "UPDATE PERSONA SET ID_ESTADO = %s WHERE ID_PERSONA = %s"
     try:
-        con=conexion()
-        cursor=con.cursor()
-        cursor.callproc=('sp_updatepersona',(id,apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro))
-        con.commit()
-        print("Datos actualizados")
+        with con.cursor() as cursor:
+            cursor.execute(sql_query, (2, id_persona))
+            con.commit()
+            print(f"Persona con ID {id_persona} eliminada exitosamente.")
     except Exception as e:
-        print("Error al querer actualizar los datos: ",e)
+        print(f"Error al eliminar persona: {e}")
+        con.rollback()
     finally:
-        cursor.close();
-        con.close();
+        con.close()
