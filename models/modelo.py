@@ -61,7 +61,7 @@ def sp_consultarPersona():
         con.close()
 
 
-
+#Interaccion con la base para usar el procedimiento almacenado
 def sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
     try:
         con=conexion()
