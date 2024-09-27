@@ -1,7 +1,6 @@
 from BD.db import conexion
-from mysql.connector import Error
 import datetime
-import mysql.connector
+
 
 
 
@@ -53,33 +52,7 @@ def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora
         cursor.close()
         con.close()
 
-# Función para conectarse a la base de datos y ejecutar SP_DeletePersona
-def sp_eliminarPersona(id_persona):
-    try:
-        # Establecer la conexión a la base de datos
-        con = mysql.connector.connect(
-            host='localhost',
-            database='persona-forbit',
-            user='root', #Completar cada uno con su Base de datos
-            password='root' #Completar cada uno con su Base de datos
-        )
 
-        if con.is_connected():
-            cursor = con.cursor()
-            # Llamar al procedimiento almacenado SP_DeletePersona
-            sql_query = "CALL SP_DeletePersona(%s)"
-            cursor.execute(sql_query, (id_persona,))
-            con.commit()
-            print(f"Persona con ID {id_persona} eliminada (baja lógica) exitosamente.")
-    
-    except Error as e:
-        print(f"Error al ejecutar SP_DeletePersona: {e}")
-        con.rollback()  # Revertir en caso de error
-    
-    finally:
-
-        cursor.close()
-        con.close()
 
 # Llamado al Stored Procedure SP_EliminarPersona
 def sp_eliminarPersona(id_persona):
