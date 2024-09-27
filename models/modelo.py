@@ -25,12 +25,6 @@ def obtenerDatos_Estado():
         con.close()
     return registros
 
-#Agregar un registro
-
-
-
-
-
 #utilizacion de SP_RegistroPersona
 def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
     con=conexion()
@@ -65,3 +59,18 @@ def sp_consultarPersona():
     finally:
         cursor.close()
         con.close()
+
+
+
+def sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
+    try:
+        con=conexion()
+        cursor=con.cursor()
+        cursor.callproc=('sp_updatepersona',(id,apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro))
+        con.commit()
+        print("Datos actualizados")
+    except Exception as e:
+        print("Error al querer actualizar los datos: ",e)
+    finally:
+        cursor.close();
+        con.close();

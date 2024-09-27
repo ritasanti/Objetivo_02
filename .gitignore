@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 OBJETIVO_02/.venv
 OBJETIVO_02/.env
-=======
-.venv
-.env
->>>>>>> main
+Objetivo_02/BD/__pycache__
+Objetivo_02/Models/__pycache__
