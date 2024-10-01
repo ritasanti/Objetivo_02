@@ -1,5 +1,5 @@
 from flask import Flask,jsonify,request
-import models
+from models import modelo
 app=Flask(__name__)
 
 
@@ -7,7 +7,7 @@ app=Flask(__name__)
 @app.route("/persona", methods=["GET"])
 def get_Persona():
     resultado=[]
-    result=models.obtenerDatos()
+    result=modelo.obtenerDatos()
     for personas in result:
         resultado.append(personas)
     return jsonify(resultado)
@@ -16,7 +16,7 @@ def get_Persona():
 #Endpoint muestra datos que cumplen condicion
 @app.route("/persona/estado", methods=["GET"])
 def get_Persona_Estado():
-    return jsonify([persona for persona in models.obtenerDatos_Estado()])
+    return jsonify([persona for persona in modelo.obtenerDatos_Estado()])
 
 
 #Ruta para el sp_RegistroPersona
@@ -30,7 +30,7 @@ def inser_registro():
     id_estado=request.form.get("id_estado")
     fechora_registro=request.form.get("fechora_registro")
     try:
-        models.sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro)
+        modelo.sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro)
         return jsonify({"Mensaje":"Registro realizado correctamente"})
     except Exception as e:
         return jsonify({"Mensaje":str (e)}), 500
@@ -46,7 +46,7 @@ def updatePersona(id):
         domicilio=request.form.get("domicilio")
         telefono=request.form.get("telefono")
         id_estado=request.form.get("id_estado")
-        models.sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,id_estado)
+        modelo.sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,id_estado)
         return jsonify({"Mensaje":"Se actualizo correctamente"})
     except Exception as e:
         return jsonify({"Mensaje":str (e)}), 500
@@ -56,7 +56,7 @@ def updatePersona(id):
 @app.route("/persona/eliminar/<int:id_persona>", methods=["DELETE"])
 def eliminar_persona(id_persona):
     try:
-        models.sp_eliminarPersona(id_persona)
+        modelo.sp_eliminarPersona(id_persona)
         return jsonify({"Mensaje": f"Persona con ID {id_persona} eliminada correctamente"}), 200
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
