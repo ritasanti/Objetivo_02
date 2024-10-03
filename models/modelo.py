@@ -1,5 +1,9 @@
 from BD.db import conexion
+from mysql.connector import Error
 import datetime
+import mysql.connector
+
+
 #Consulta get de todos las personas
 def obtenerDatos():
     conecc=conexion()
@@ -25,29 +29,6 @@ def obtenerDatos_Estado():
         con.close()
     return registros
 
-#Agregar un registro
-#Revisar 
-"""def agregarRegistro(apellido, nombres, dni, domicilio, telefono, id_estado, fecha_registro,fecha_modificacion):
-    try:
-        conex = conexion()
-        with conex.cursor() as cursor:
-            sql = "INSERT INTO PERSONA(APELLIDO, NOMBRE, DNI, DOMICILIO, TELEFONO, ID_ESTADO, FECHA_REGISTRO,FECHA_MODIFICACION) VALUES (%s, %s, %s, %s, %s, %s, %s,%s)"
-            cursor.execute(sql, (apellido, nombres, dni, domicilio, telefono, id_estado, fecha_registro,fecha_modificacion))
-            conex.commit()
-    except Exception as e:
-        print("Error al agregar el registro:", e)
-    finally:
-        conex.close()"""
-
-
-#Eliminar el registro
-def eliminarDato(id):
-    con=conexion()
-    sql_queryy="DELETE FROM PERSONA WHERE ID=%s"
-    with con.cursor() as cursor:
-        cursor.execute(sql_queryy,id)
-        con.commit()
-        con.close()
 
 #utilizacion de SP_RegistroPersona
 def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
@@ -65,21 +46,42 @@ def sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora
     finally:
         cursor.close()
         con.close()
-  
 
-
-#Llamado al Stored Procedure SP_ConsultarPersona
-def sp_consultarPersona():
-    con=conexion()
-    cursor=con.cursor()
-    sql_query="CALL SP_CONSULTARPERSONA"
+#Interaccion con la base para usar el procedimiento almacenado
+def sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro):
     try:
-        cursor.execute(sql_query)
-        results=cursor.fetchall()
-        return results
+        con=conexion()
+        cursor=con.cursor()
+        cursor.callproc=('sp_updatepersona',(id,apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro))
+        con.commit()
+        print("Datos actualizados")
     except Exception as e:
-        print("Error al llamar al procedimiento: ",e)
-        return None
+        print("Error al querer actualizar los datos: ",e)
     finally:
-        cursor.close()
-        con.close()
+        cursor.close();
+        con.close();
+
+# Función para conectarse a la base de datos y ejecutar SP_DeletePersona
+def sp_eliminarPersona(id_persona):
+    try:
+        # Establecer la conexión a la base de datos
+        con = mysql.connector.connect(
+            host='localhost', #Colocar cada uno su respectivos datos de la bd
+            database='persona-forbit', #Colocar cada uno su respectivos datos de la bd
+            user='root',  #Colocar cada uno su respectivos datos de la bd
+            password=''  #Colocar cada uno su respectivos datos de la bd
+        )
+        if con.is_connected():
+            cursor = con.cursor()
+            # Llamar al procedimiento almacenado SP_DeletePersona
+            sql_query = "CALL SP_DeletePersona(%s)"
+            cursor.execute(sql_query, (id_persona,))
+            con.commit()
+            print(f"Persona con ID {id_persona} eliminada (baja lógica) exitosamente.")
+    except Error as e:
+        print(f"Error al ejecutar SP_DeletePersona: {e}")
+        con.rollback()  # Revertir en caso de error
+    finally:
+        if con.is_connected():
+            cursor.close()
+            con.close()
