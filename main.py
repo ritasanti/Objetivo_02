@@ -2,6 +2,7 @@ from flask import Flask,jsonify,request
 from BD.db import conexion
 from models import modelo
 import hashlib
+from datetime import datetime
 
 app=Flask(__name__)
 
@@ -23,25 +24,24 @@ def get_Persona_Estado():
 
 #ApiAgregarPersona
 @app.route("/persona/agregar", methods=["POST"])
-def agregar_Persona():
-    apellido=request.form.get("apellido")
-    nombres=request.form.get("nombres")
-    dni=request.form.get("dni")
-    domicilio=request.form.get("domicilio")
-    telefono=request.form.get("telefono")
-    fechora_registros=request.form.get("fechora_registros")
-    edad=request.form.get("edad")
-    genero=request.form.get("genero")
-    antiguedad=request.form.get("antiguedad")
-    email=request.form.get("email")
-    id_reparticion=request.form.get("id_reparticion")
-    id_estado=request.form.get("id_estado")
+def agregar_persona():
+    apellido = request.form.get("apellido")
+    nombres = request.form.get("nombres")
+    dni = request.form.get("dni")
+    domicilio = request.form.get("domicilio")
+    telefono = request.form.get("telefono")
+    fechora_registros = request.form.get("fechora_registros", datetime.today())
+    fecha_nac = request.form.get("fecha_nac")
+    genero = request.form.get("genero")
+    email = request.form.get("email")
+    id_reparticion = request.form.get("id_reparticion")
+    id_estado_registro = request.form.get("id_estado")
 
     try:
-        modelo.sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,fechora_registros,edad,genero,antiguedad,email,id_reparticion,id_estado)
-        return jsonify({"Mensaje":"Registro realizado correctamente"})
+        modelo.sp_AgregarPersona(apellido, nombres, dni, domicilio, fecha_nac, telefono, fechora_registros, genero, email, id_reparticion, id_estado_registro)
+        return jsonify({"Mensaje": "Registro realizado correctamente"}), 201
     except Exception as e:
-        return jsonify({"Mensaje":str (e)}), 500
+        return jsonify({"Mensaje": str(e)}), 500
 
 #ApiUpdatePersona
 @app.route("/persona/modificar/<int:id>", methods=["PUT"])
@@ -58,7 +58,8 @@ def modificar_Persona(id):
         email=request.form.get("email")
         id_reparticion=request.form.get("id_reparticion")
         id_estado=request.form.get("id_estado")
-        modelo.sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,edad,genero,antiguedad,email,id_reparticion,id_estado)
+        fechora_registro = datetime.now()
+        modelo.sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,edad,genero,antiguedad,email,id_reparticion,id_estado,fechora_registro)
         return jsonify({"Mensaje":"Se actualizo correctamente"})
     except Exception as e:
         return jsonify({"Mensaje":str (e)}), 500

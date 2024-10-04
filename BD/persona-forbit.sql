@@ -10,29 +10,22 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema persona-forbit
 -- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema persona-forbit
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `persona-forbit` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs ;
-USE `persona-forbit` ;
+CREATE SCHEMA IF NOT EXISTS `persona-forbit` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+USE `persona-forbit`;
 
 -- -----------------------------------------------------
 -- Table `persona-forbit`.`estado`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `persona-forbit`.`estado` (
+CREATE TABLE IF NOT EXISTS `estado` (
   `id` INT NOT NULL DEFAULT '1',
   `descrip` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- Table `persona-forbit`.`persona`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `persona-forbit`.`persona` (
+CREATE TABLE IF NOT EXISTS `persona` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `apellido` VARCHAR(100) NULL DEFAULT NULL,
   `nombres` VARCHAR(100) NULL DEFAULT NULL,
@@ -46,120 +39,100 @@ CREATE TABLE IF NOT EXISTS `persona-forbit`.`persona` (
   INDEX `id_estado` (`id_estado` ASC) VISIBLE,
   CONSTRAINT `persona_ibfk_1`
     FOREIGN KEY (`id_estado`)
-    REFERENCES `persona-forbit`.`estado` (`id`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 13
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-USE `persona-forbit` ;
+    REFERENCES `estado` (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 13 DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 -- -----------------------------------------------------
 -- procedure SP_ConsultarPersonaID
 -- -----------------------------------------------------
-
-DROP PROCEDURE IF EXISTS SP_ConsultarPersona
-
+DROP PROCEDURE IF EXISTS SP_ConsultarPersonaID;
 DELIMITER //
-USE `persona-forbit`//
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_ConsultarPersonaID`(
     IN P_Id_Persona INT
 )
 BEGIN
     SELECT *
     FROM persona
-    WHERE Id_Persona = P_Id_Persona;
+    WHERE id = P_Id_Persona;  -- Cambiar a 'id' para que coincida con la columna
 END//
-
 DELIMITER ;
 
 -- -----------------------------------------------------
 -- procedure SP_AgregarPersona
 -- -----------------------------------------------------
-
-DROP PROCEDURE IF EXISTS SP_REGISTROPERSONA
-
+DROP PROCEDURE IF EXISTS SP_AgregarPersona;
 DELIMITER //
-USE `persona-forbit`//
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_AgregarPersona`(
-IN P_Apellido VARCHAR(100),
-IN P_Nombres VARCHAR(100),
-IN P_DNI VARCHAR(8),
-IN P_Domicilio VARCHAR(100),
-IN P_Fecha_Nac DATE,
-IN P_Telefono VARCHAR(15),
-IN P_FecHora_Registros DATE,
-IN P_Genero VARCHAR(50),
-IN P_Email VARCHAR(50),
-IN P_Id_Reparticion INT,
-IN P_Id_Estado_Registro INT)
+    IN P_Apellido VARCHAR(100),
+    IN P_Nombres VARCHAR(100),
+    IN P_DNI VARCHAR(8),
+    IN P_Domicilio VARCHAR(100),
+    IN P_Fecha_Nac DATE,
+    IN P_Telefono VARCHAR(15),
+    IN P_FecHora_Registros DATE,
+    IN P_Genero VARCHAR(50),
+    IN P_Email VARCHAR(50),
+    IN P_Id_Reparticion INT,
+    IN P_Id_Estado_Registro INT
+)
 BEGIN
-INSERT INTO PERSONA(Apellido,Nombres,DNI,Domicilio,Fecha_Nac,Telefono,FecHora_Registros,Genero,Email,Id_Reparticion,Id_Estado_Registro)
-VALUES(P_Apellido,P_Nombres,P_DNI,P_Domicilio,P_FecHora_Nac,P_Telefono,P_FecHora_Registros,P_Genero,P_Email,P_Id_Reparticion,P_Id_Estado_Registro);
+    INSERT INTO persona(Apellido, Nombres, DNI, Domicilio, Fecha_Nac, Telefono, FecHora_registro, Genero, Email, Id_Reparticion, Id_Estado)
+    VALUES(P_Apellido, P_Nombres, P_DNI, P_Domicilio, P_Fecha_Nac, P_Telefono, P_FecHora_Registros, P_Genero, P_Email, P_Id_Reparticion, P_Id_Estado_Registro);
 END//
-
 DELIMITER ;
 
 -- -----------------------------------------------------
 -- procedure SP_ModificarPersona
 -- -----------------------------------------------------
-
-DROP PROCEDURE IF EXISTS SP_UpdatePersona
-
+DROP PROCEDURE IF EXISTS SP_UpdatePersona;
 DELIMITER //
-USE `persona-forbit`//
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_ModificarPersona`(
-	IN P_Id_Persona INT,
-	IN P_Apellido VARCHAR(100),
-	IN P_Nombres VARCHAR(100),
-	IN P_DNI VARCHAR(8),
-	IN P_Domicilio VARCHAR(100),
-	IN P_Fecha_Nac DATE,
-	IN P_Telefono VARCHAR(15),
-	IN P_FecHora_Modificacion DATE,
-	IN P_Genero VARCHAR(50),
-	IN P_Email VARCHAR(50),
-	IN P_Id_Reparticion INT,
-	IN P_Id_Estado_Registro INT
+    IN P_Id_Persona INT,
+    IN P_Apellido VARCHAR(100),
+    IN P_Nombres VARCHAR(100),
+    IN P_DNI VARCHAR(8),
+    IN P_Domicilio VARCHAR(100),
+    IN P_Fecha_Nac DATE,
+    IN P_Telefono VARCHAR(15),
+    IN P_FecHora_Modificacion DATE,
+    IN P_Genero VARCHAR(50),
+    IN P_Email VARCHAR(50),
+    IN P_Id_Reparticion INT,
+    IN P_Id_Estado_Registro INT
 )
 BEGIN
-	UPDATE persona
+    UPDATE persona
     SET
-		Apellido = P_Apellido,
+        Apellido = P_Apellido,
         Nombres = P_Nombres,
         DNI = P_DNI,
         Domicilio = P_Domicilio,
         Fecha_Nac = P_Fecha_Nac,
         Telefono = P_Telefono,
-        FecHora_Modificacion = P_FecHora_Modificacion,
+        FecHora_modificacion = P_FecHora_Modificacion,
         Genero = P_Genero,
         Email = P_Email,
         Id_Reparticion = P_Id_Reparticion,
-        Id_Estado_Registro = P_Id_Estado_Registro
-	WHERE Id_Persona = P_Id_Persona;
+        Id_Estado = P_Id_Estado_Registro
+    WHERE id = P_Id_Persona;  -- Cambiar a 'id' para que coincida con la columna
 END//
-
 DELIMITER ;
 
 -- -----------------------------------------------------
 -- procedure SP_EliminarPersona
 -- -----------------------------------------------------
-
-DROP PROCEDURE IF EXISTS SP_DeletePersona
-
+DROP PROCEDURE IF EXISTS SP_DeletePersona;
 DELIMITER //
-USE `persona-forbit`//
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EliminarPersona`(
     IN P_Id_Persona INT
 )
 BEGIN
     UPDATE persona
     SET 
-        Id_Estado_Registro = 2,
-        FecHora_Modificacion = now()
-    WHERE Id_Persona = P_Id_Persona;
+        Id_Estado = 2,
+        FecHora_Modificacion = NOW()
+    WHERE id = P_Id_Persona;  -- Cambiar a 'id' para que coincida con la columna
 END//
-
 DELIMITER ;
 
 SET SQL_MODE=@OLD_SQL_MODE;
