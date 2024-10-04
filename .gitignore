@@ -1,6 +1,9 @@
 .venv
 .env
 
+*.pyc
+__pycache__/
+
 OBJETIVO_02/.venv
 OBJETIVO_02/.env
 Objetivo_02/BD/__pycache__
