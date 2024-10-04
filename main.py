@@ -61,6 +61,49 @@ def eliminar_persona(id_persona):
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
 
+# Ruta para SP_AgregarReparticion
+@app.route("/reparticion/agregar", methods=["POST"])
+def agregarReparticion():
+    try:
+        nombres = request.form.get("nombres")
+        descripcion = request.form.get("descripcion")
+        modelo.sp_agregarReparticion(nombres, descripcion)
+        return jsonify({"Mensaje": "Repartición agregada correctamente"}), 201
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 500
+
+# Ruta para SP_ConsultaReparticionID
+@app.route("/reparticion/consulta/<int:id_reparticion>", methods=["GET"])
+def consultaReparticion(id_reparticion):
+    try:
+        reparticion = modelo.sp_consultaReparticionID(id_reparticion)
+        if reparticion:
+            return jsonify(reparticion), 200
+        else:
+            return jsonify({"Mensaje": "Repartición no encontrada"}), 404
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 500
+
+# Ruta para SP_EliminarReparticion
+@app.route("/reparticion/eliminar/<int:id_reparticion>", methods=["DELETE"])
+def eliminarReparticion(id_reparticion):
+    try:
+        modelo.sp_eliminarReparticion(id_reparticion)
+        return jsonify({"Mensaje": f"Repartición con ID {id_reparticion} eliminada correctamente"}), 200
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 500
+
+# Ruta para SP_ModificarReparticion
+@app.route("/reparticion/update/<int:id_reparticion>", methods=["PUT"])
+def modificarReparticion(id_reparticion):
+    try:
+        nombres = request.form.get("nombres")
+        descripcion = request.form.get("descripcion")
+        modelo.sp_modificarReparticion(id_reparticion, nombres, descripcion)
+        return jsonify({"Mensaje": "Repartición modificada correctamente"}), 200
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 500
+    
 if __name__=='__main__':
     with app.app_context():
         app.run(host="localhost",port="5000",debug=True)
