@@ -18,41 +18,49 @@ def get_Persona():
 def get_Persona_Estado():
     return jsonify([persona for persona in modelo.obtenerDatos_Estado()])
 
-
-#Ruta para el sp_RegistroPersona
-@app.route("/persona/SP_Registro", methods=["POST"])
-def inser_registro():
+#ApiAgregarPersona
+@app.route("/persona/agregar", methods=["POST"])
+def agregar_Persona():
     apellido=request.form.get("apellido")
     nombres=request.form.get("nombres")
     dni=request.form.get("dni")
     domicilio=request.form.get("domicilio")
     telefono=request.form.get("telefono")
+    fechora_registros=request.form.get("fechora_registros")
+    edad=request.form.get("edad")
+    genero=request.form.get("genero")
+    antiguedad=request.form.get("antiguedad")
+    email=request.form.get("email")
+    id_reparticion=request.form.get("id_reparticion")
     id_estado=request.form.get("id_estado")
-    fechora_registro=request.form.get("fechora_registro")
+
     try:
-        modelo.sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,id_estado,fechora_registro)
+        modelo.sp_RegistroPersona(apellido,nombres,dni,domicilio,telefono,fechora_registros,edad,genero,antiguedad,email,id_reparticion,id_estado)
         return jsonify({"Mensaje":"Registro realizado correctamente"})
     except Exception as e:
         return jsonify({"Mensaje":str (e)}), 500
 
-
-#Ruta para el SP_UpdatePersona
-@app.route("/persona/update/<int:id>", methods=["PUT"])
-def updatePersona(id):
+#ApiUpdatePersona
+@app.route("/persona/modificar/<int:id>", methods=["PUT"])
+def modificar_Persona(id):
     try:
         apellido=request.form.get("apellido")
         nombres=request.form.get("nombres")
         dni=request.form.get("dni")
         domicilio=request.form.get("domicilio")
         telefono=request.form.get("telefono")
+        edad=request.form.get("edad")
+        genero=request.form.get("genero")
+        antiguedad=request.form.get("antiguedad")
+        email=request.form.get("email")
+        id_reparticion=request.form.get("id_reparticion")
         id_estado=request.form.get("id_estado")
-        modelo.sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,id_estado)
+        modelo.sp_updatePersona(id,apellido,nombres,dni,domicilio,telefono,edad,genero,antiguedad,email,id_reparticion,id_estado)
         return jsonify({"Mensaje":"Se actualizo correctamente"})
     except Exception as e:
         return jsonify({"Mensaje":str (e)}), 500
 
-
-# Ruta para el SP_EliminarPersona
+#ApiDeletePersona
 @app.route("/persona/eliminar/<int:id_persona>", methods=["DELETE"])
 def eliminar_persona(id_persona):
     try:
@@ -60,6 +68,26 @@ def eliminar_persona(id_persona):
         return jsonify({"Mensaje": f"Persona con ID {id_persona} eliminada correctamente"}), 200
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
+
+# ApiConsultaPersonaID
+@app.route("/persona/consulta/<int:id_persona>", methods=["GET"])
+def consulta_Persona(id_persona):
+    try:
+        persona = modelo.sp_consultaPersonaID(id_persona)
+        if persona:
+            return jsonify(persona), 200
+        else:
+            return jsonify({"Mensaje": "Persona no encontrada"}), 404
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 500
+    
+#ApiListadoPersonasTake(30)
+@app.route("/persona/listado", methods=["GET"])
+def listado_Persona():
+    num_personas = request.args.get('take', default=30, type=int)
+    result = modelo.obtenerDatos()
+    resultado = result[:num_personas]
+    return jsonify(resultado)
 
 # Ruta para SP_AgregarReparticion
 @app.route("/reparticion/agregar", methods=["POST"])
