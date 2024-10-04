@@ -1,5 +1,8 @@
 from flask import Flask,jsonify,request
+from BD.db import conexion
 from models import modelo
+import hashlib
+
 app=Flask(__name__)
 
 
@@ -60,6 +63,111 @@ def eliminar_persona(id_persona):
         return jsonify({"Mensaje": f"Persona con ID {id_persona} eliminada correctamente"}), 200
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
+    
+
+
+
+#funcion para comparar contraseñas
+def verificar_claves(password_ingresada,hashed_password):
+    hash_ingresada=hashlib.md5(password_ingresada.encode()).hexdigest()
+    #comparar claves
+    return hash_ingresada==hashed_password
+
+#Api para comprobar que el usuario esta registrado en la base de datos
+#Todavia en revision
+@app.route('/api/login', methods=['POST'])
+def login_api():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    con = conexion()
+    cursor = con.cursor()
+    try:
+        cursor.execute("SELECT id, password FROM usuarios WHERE nombres = %s", (username,))
+        user = cursor.fetchone()
+
+        if user and verificar_claves(password, user[1]):
+            return jsonify({'status': True, 'cod': user[0]})
+        else:
+            return jsonify({'status': False})
+    finally:
+        cursor.close()
+        con.close()
+
+
+#Prueba de api Tipo_usario
+
+
+@app.route('/api/tipo_usuario', methods=['GET'])
+def obtener_tipo_usuario():
+    id_usuario = request.args.get('id_usuario')
+    if not id_usuario:
+        return jsonify({'status': False, 'error': 'Id_Usuario es requerido'}), 400
+
+    con = conexion()
+    cursor = con.cursor()
+    try:
+        query = """
+        SELECT tu.descripcion 
+        FROM usuarios u
+        JOIN tipo_usuario tu ON u.id_tipo_usuario = tu.id_tipo_usuario
+        WHERE u.id = %s
+        """
+        cursor.execute(query, (id_usuario,))
+        user = cursor.fetchone()
+        
+        if user:
+            return jsonify({'status': True, 'tipo_usuario': user[0]})
+        else:
+            return jsonify({'status': False, 'error': 'Usuario no encontrado'}), 404
+    finally:
+        cursor.close()
+        con.close()
+
+
+
+#Prueba api datosUsuario
+#Ver de factorizar
+@app.route('/api/datos_usuario', methods=['GET'])
+def obtener_datos_usuario():
+    id_usuario = request.args.get('id_usuario')
+    if not id_usuario:
+        return jsonify({'status': False, 'error': 'Id_Usuario es requerido'}), 400
+
+    con = conexion()
+    cursor = con.cursor()
+    try:
+        query = """
+        SELECT u.id, u.Apellido, u.Nombres, u.Password, tu.descripcion AS tipo_usuario, u.fechora_registro, u.fechora_modificacion, u.id_estado_registro
+        FROM usuarios u
+        JOIN tipo_usuario tu ON u.id_tipo_usuario = tu.id_tipo_usuario
+        WHERE u.id = %s
+        """
+        cursor.execute(query, (id_usuario,))
+        user = cursor.fetchone()
+        
+        if user:
+            user_data = {
+                'id': user[0],
+                'Apellido': user[1],
+                'Nombres': user[2],
+                'Password': user[3],
+                'tipo_usuario': user[4],
+                'fechora_registro': user[5],
+                'fechora_modificacion': user[6],
+                'id_estado_registro': user[7]
+            }
+            return jsonify({'status': True, 'datos_usuario': user_data})
+        else:
+            return jsonify({'status': False, 'error': 'Usuario no encontrado'}), 404
+    finally:
+        cursor.close()
+        con.close()
+
+
+
+
 
 # Ruta para SP_AgregarReparticion
 @app.route("/reparticion/agregar", methods=["POST"])
